@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -75,7 +74,9 @@ public class PruebaServlets extends HttpServlet {
 		
 		//RequestDispatcher rd = getServletContext().getRequestDispatcher(arg0)
 		//rd.include(request, response);
-				
+		//ApplicationDispatcher ad;	
+		//BasicDataSource bds;
+		
 		response.setContentType("text/html");
 		PrintWriter  out = response.getWriter();
 		out.println("<html><head><title>Servlet de prueba</title></head>");
