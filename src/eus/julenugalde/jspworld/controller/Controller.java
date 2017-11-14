@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import eus.julenugalde.jspworld.model.*;
+
 /**
  * Servlet implementation class Controller
  */
@@ -19,13 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private PrintWriter pr; 
-	
+	private Model model;
+    
     /**
      * @see HttpServlet#HttpServlet()
      */
     public Controller() {
         super();
-        // TODO Auto-generated constructor stub
+        model = new WorldModel();
     }
 
 	/**
@@ -42,10 +45,22 @@ public class Controller extends HttpServlet {
 		addParagraph("Kaixo, mundua!");
 		addParagraph("Request Dispatcher: " + request.getRequestDispatcher(""));
 		
+		model.openDBConnection("julen", "armenelos", "localhost", 3306);
+		addParagraph(model.getCountryByCode("CAN").toString());
+		addParagraph(model.getCountryByCode("USA").toString());
+		addParagraph(model.getCountryByCode("ITA").toString());
+		addParagraph(model.getCountryByCode("DEU").toString());
+		addParagraph(model.getCountryByCode("GER").toString());
+		addParagraph(model.getCountryByCode("ESP").toString());
+		addParagraph(model.getCountryByCode("IND").toString());
+		addParagraph(model.getCountryByCode("CHN").toString());
+		addParagraph(model.getCountryByCode("XXX").toString());
+		addParagraph(model.getCountryByCode("AND").toString());
+		model.closeDBConnection();
 		System.err.println("Real path: "+getServletContext().getRealPath(getServletName()));
 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/JSPWorld/PruebaJSP");
 		System.err.println("Reuqest dispatcher: " + rd.toString());
-		rd.forward(request, response);
+		//rd.forward(request, response);
 	}
 	
 	private void addParagraph(String text) {

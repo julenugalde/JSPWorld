@@ -1,6 +1,6 @@
 package eus.julenugalde.jspworld.model;
 
-/** Class that encapsulates the country information in the 'world' database */
+/** Class that encapsulates the 'country' data information in the 'world' database */
 public class Country {
 	/** Code char(3) primary key no null - country code */
 	private String code;
@@ -14,7 +14,7 @@ public class Country {
 	/** Region char(26) no null - Region */
 	private String region;
 	
-	/** SurfaceArea float(10,2) no null default:0.00 - Surface area */	//TODO ver unidades 
+	/** SurfaceArea float(10,2) no null default:0.00 - Surface area in km^2 */ 
 	private float surfaceArea;
 	
 	/** IndepYear smallint(6) default:null - Independence year */
@@ -23,13 +23,13 @@ public class Country {
 	/** Population int(11) no null - Population */
 	private int population;
 	
-	/** LifeExpectancy float(3,1) default:null - Life Expectancy */
+	/** LifeExpectancy float(3,1) default:null - Life Expectancy in years */
 	private float lifeExpectancy;
 	
 	/** GNP float(10,2) default:null - Gross National Product in USD */
 	private float gnp;
 	
-	/** GNPOld float(10,2) default:null - Old Gross National Product */
+	/** GNPOld float(10,2) default:null - Old Gross National Product in USD */
 	private float gnpOld;
 	
 	/** LocalName char(45) no null - Local name */
@@ -42,10 +42,13 @@ public class Country {
 	private String headOfState;
 	
 	/** Capital int(11) default:null - Capital */
-	private String capital;
+	private City capital;
 	
 	/** Code2 char(2) no null - 2-character country code */
 	private String code2;
+	
+	/** Array with the languages spoken in the country */
+	private Language[] languages;
 	
 	public Country() {
 		setCode("");
@@ -61,8 +64,9 @@ public class Country {
 		setLocalName("");
 		setGovernmentForm("");
 		setHeadOfState("");
-		setCapital("");
+		setCapital(new City());
 		setCode2("");
+		setLanguages(null);
 	}
 
 	/**
@@ -250,14 +254,14 @@ public class Country {
 	/**
 	 * @return the capital
 	 */
-	public String getCapital() {
+	public City getCapital() {
 		return capital;
 	}
 
 	/**
 	 * @param capital the capital to set
 	 */
-	public void setCapital(String capital) {
+	public void setCapital(City capital) {
 		this.capital = capital;
 	}
 
@@ -275,5 +279,31 @@ public class Country {
 		this.code2 = code2;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name + " {code=" + code + ", region=" + region + ", population=" + population);
+		sb.append(", continent=" + continent.getName() + ", capital=" + capital.getName());
+		sb.append(", capital_population=" + capital.getPopulation());
+		if (languages.length == 0) sb.append(", no languages");
+		for (int i=0; i<languages.length; i++) {
+			sb.append(", language" + (i+1) + "={" + languages[i].toString() + "}");
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * @return the languages
+	 */
+	public Language[] getLanguages() {
+		return languages;
+	}
+
+	/**
+	 * @param languages the languages to set
+	 */
+	public void setLanguages(Language[] languages) {
+		this.languages = languages;
+	}
 
 }

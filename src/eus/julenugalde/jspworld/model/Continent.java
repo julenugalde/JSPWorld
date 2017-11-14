@@ -23,7 +23,7 @@ public enum Continent {
 	public String getName() {return name;}
 	
 	public static Continent getByName(String name) {
-		//TODO CHANGE. SHOULD BE SIMILAR TO THIS: 
+		//TODO Check if there's a better way to do this. Something like: 
 		//return Continent.valueOf(Continent.class, name);
 		if (name.equals("Asia")) return ASIA;
 		if (name.equals("Europe")) return EUROPE;
