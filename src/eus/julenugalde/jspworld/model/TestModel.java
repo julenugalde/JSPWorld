@@ -1,8 +1,6 @@
 package eus.julenugalde.jspworld.model;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 /** Test class for checking the model, using the standard output */
@@ -10,46 +8,54 @@ public class TestModel {
 
 	public static void main(String[] args) {
 		// Default values for DB connection
-		String user = "";
-		String password = "";
-		String dbServer = "localhost";
-		int dbPort = 3306;
+		ConnectionData connectionData = new ConnectionData ("", "", "localhost", 3306);
 		
 		try {
 			// Ask for DB credentials
-			System.out.print("User name at '" + dbServer + ":" + dbPort + "' --> ");
-			BufferedReader br = new BufferedReader(new InputStreamReader (System.in));
-			user = br.readLine();
+			/*System.out.print("User name at '" + connectionData.getAddress() + ":" + 
+					connectionData.getPort() + "' --> ");
+			java.io.BufferedReader br = new java.io.BufferedReader(
+					new java.io.InputStreamReader(System.in));
+			connectionData.setUser(br.readLine());
 			System.out.print("Password --> ");
-			password = br.readLine();
-					
+			connectionData.setPassword(br.readLine());
+			*/
+			connectionData.setUser("jspworld");
+			connectionData.setPassword("jspworld");
+			
 			//Instance the model and retreive the country data
 			Model model = new WorldModel();
-			model.openDBConnection(user, password, dbServer, dbPort);
-			Hashtable<String, Country> countries = model.getCountryList();
-			//Hashtable<Integer, City> citiesCanada = model.getCityListByCountry("CAN");
-			Country cGermany = countries.get("DEU");
-			//Country cGermany = model.getCountryByCode("DEU");
-			model.closeDBConnection();
-			
+			model.openDBConnection(connectionData);
+						
 			//Tests on model methods
-			/*java.io.File file = new File("c:/temp/countries.csv");
+			/*Hashtable<String, Country> countries = model.getCountryList();
+			java.io.File file = new File("c:/temp/countries.csv");
 			System.out.println("File name: " + file.getAbsolutePath());
 			DataManager.exportCountriesToCSV(countries, file);
 			*/
 			/*System.out.println("Full list of countries:");
 			System.out.println(DataManager.getCountriesString(countries));
 			*/
-			/*System.out.println("Major cities in Canada:");
+			Hashtable<Integer, City> citiesCanada = model.getCityListByCountry("CAN");
+			System.out.println("Major cities in Canada:");
 			System.out.println(DataManager.getCitiesString(citiesCanada));
-			*/
+			
+			/*Country cGermany = countries.get("DEU");
+			//Country cGermany = model.getCountryByCode("DEU");
 			System.out.println(cGermany.toString());
 			System.out.println("Major cities in Germany:");
 			System.out.println(DataManager.getCitiesString(
 					model.getCityListByCountry(cGermany)));
+			*/
+			/*System.out.println("List of countries in Europe:");
+			Hashtable<String, Country> countriesEurope = model.getCountryList(Continent.EUROPE);
+			System.out.println(DataManager.getCountriesString(countriesEurope));
+			*/
 			
-		} catch (IOException ioex) {
-			System.err.println("Error loading data from DB: " + ioex.getLocalizedMessage());
+			model.closeDBConnection();
+			
+		} catch (Exception e) {
+			System.err.println("Error loading data from DB: " + e.getLocalizedMessage());
 		}
 	}
 }

@@ -4,14 +4,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Prueba JSP</title>
+<title>Error</title>
 </head>
 <body>
-<p>Esto es un JSP  de prueba llamado <% out.println(this.getServletName()); %>
- y con la siguiente información: 
-<% out.println(getServletInfo()); %>.</p>
-
-
+<p>The page can't be displayed</p>
+<%
+String errorText = (String)request.getAttribute("errorText");
+if (errorText != null){
+	out.write("<p>" + errorText + "</p>");
+}
+	
+%>
 
 </body>
 </html>

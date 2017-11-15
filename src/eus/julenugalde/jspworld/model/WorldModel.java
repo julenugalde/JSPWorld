@@ -14,34 +14,45 @@ import org.apache.commons.dbcp.BasicDataSource;
 /** Implementation of the model using the 'world' database */
 public class WorldModel implements Model {
 	BasicDataSource dataSource;
+	ConnectionData credentials;
 	Connection con;
 	Hashtable<String, Country> tableCountries;
+	
 	
 	public WorldModel() {
 		tableCountries = new Hashtable<String, Country>();
 		dataSource = null;
 		con = null;
+		credentials = new ConnectionData();
 	}	
 
 	@Override
-	public void openDBConnection(String userName, String password, String dbServer, int dbPort) {
+	public boolean openDBConnection(ConnectionData connectionData) {
 		try {
+			//Store the credentials for future connections
+			credentials.setUser(connectionData.getUser());
+			credentials.setPassword(connectionData.getPassword());
+			credentials.setAddress(connectionData.getAddress());
+			credentials.setPort(connectionData.getPort());
+			
 			dataSource = new BasicDataSource();
 			dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-			dataSource.setUrl("jdbc:mysql://" + dbServer + 
-					":" + String.valueOf(dbPort) + "/world" + 
+			dataSource.setUrl("jdbc:mysql://" + connectionData.getAddress() + 
+					":" + String.valueOf(connectionData.getPort()) + "/world" + 
 					"?autoReconnect=true&useSSL=false");
-			dataSource.setUsername(userName);
-			dataSource.setPassword(password);
+			dataSource.setUsername(connectionData.getUser());
+			dataSource.setPassword(connectionData.getPassword());
 			con = dataSource.getConnection();
-			
+			return !(con == null);
 		} catch (SQLException e) {
 			System.err.println("SQL exception: " + e.getMessage());
+			return false;
 		} finally {
 			try {
 				if (con != null) {
 					con.close();
 				}
+				return false;
 			} catch (SQLException e) {
 				System.err.println("Error closing the DB connection: " + e.getSQLState());
 			}
@@ -51,91 +62,15 @@ public class WorldModel implements Model {
 	@Override
 	public Hashtable<String, Country> getCountryList() {
 		try {
+			if (dataSource == null) {
+				openDBConnection(credentials);
+			}
 			con = dataSource.getConnection();
 			PreparedStatement stmCountries = con.prepareStatement("SELECT * FROM country");
-			PreparedStatement stmCapital = null;
-			PreparedStatement stmLanguages = null;
-			ResultSet rsCountries = stmCountries.executeQuery();
-			ResultSet rsCapital = null;
-			ResultSet rsLanguages = null;
-			
-			//DEBUG - View metadata
-			/*java.sql.ResultSetMetaData rsmd = rs.getMetaData();
-			System.out.println("Type\tSize\tName");
-			System.out.println("----------------------------------------------");
-			for (int i=1; i<=rsmd.getColumnCount(); i++) {
-				System.out.println(rsmd.getColumnTypeName(i) + "\t" + 
-						rsmd.getColumnDisplaySize(i) + "\t" + rsmd.getColumnName(i));				
-			}*/
-			
-			tableCountries.clear();
-			
-			Country country;
-			Language[] temp;
-			ArrayList<Language> alLanguages = new ArrayList<Language>();
-			boolean official;
-			while (rsCountries.next()) {
-				country = new Country();
-				country.setCode(rsCountries.getString("Code"));
-				
-				//First the capital city is searched in the database
-				stmCapital = con.prepareStatement(
-						"SELECT * FROM city WHERE ID='" + rsCountries.getInt("Capital") + "'");
-				rsCapital = stmCapital.executeQuery();
-				if (rsCapital.next()) {
-					country.setCapital(new City(rsCapital.getInt("ID"),	//id
-							 rsCapital.getString("Name"),	//name
-							 rsCapital.getString("CountryCode"),	//country code
-							 rsCapital.getString("District"),	//district
-							 rsCapital.getInt("Population")));	//population);
-				}
-				
-				//The languages information is retreived from the database
-				alLanguages.clear();
-				stmLanguages = con.prepareStatement(
-						"SELECT * FROM countrylanguage WHERE CountryCode='" + 
-						country.getCode() + "'");
-				rsLanguages = stmLanguages.executeQuery();
-				while (rsLanguages.next()) {
-					if (rsLanguages.getString("IsOfficial").equals("T"))
-						official = true;
-					else	//equals("F")
-						official = false;
-					alLanguages.add(new Language(
-							rsLanguages.getString("CountryCode"), //country code
-							rsLanguages.getString("Language"), //name
-							official,
-							rsLanguages.getFloat("Percentage")));	//percentage
-				}			
-				temp = new Language[alLanguages.size()]; 
-				temp = (Language[])alLanguages.toArray(temp);
-				if (temp != null) {
-					country.setLanguages(temp);
-				}
-				
-				// The rest of the fields are filled
-				country.setName(rsCountries.getString("Name"));
-				country.setContinent(Continent.getByName(rsCountries.getString("Continent")));
-				country.setRegion(rsCountries.getString("Region"));
-				country.setSurfaceArea(rsCountries.getFloat("SurfaceArea"));
-				country.setIndependenceYear(rsCountries.getInt("IndepYear"));
-				country.setPopulation(rsCountries.getInt("Population"));
-				country.setLifeExpectancy(rsCountries.getFloat("LifeExpectancy"));
-				country.setGnp(rsCountries.getFloat("GNP"));
-				country.setGnpOld(rsCountries.getFloat("GNPOld"));
-				country.setLocalName(rsCountries.getString("LocalName"));
-				country.setGovernmentForm(rsCountries.getString("GovernmentForm"));
-				country.setHeadOfState(rsCountries.getString("HeadOfState"));
-				country.setCode2(rsCountries.getString("Code2"));
 		
-				//Insert the new country to the hash table
-				tableCountries.put(country.getCode(), country);
-			}
+			fillTableCountries(stmCountries);
 			
 			stmCountries.close();
-			if (stmCapital != null) {
-				stmCapital.close();
-			}
 			return tableCountries;
 			
 		} catch (SQLException e) {
@@ -152,6 +87,83 @@ public class WorldModel implements Model {
 			}
 		}
 			
+	}
+
+	private void fillTableCountries(PreparedStatement stmCountries) throws SQLException {
+		PreparedStatement stmCapital = null;
+		PreparedStatement stmLanguages = null;
+		ResultSet rsCountries = stmCountries.executeQuery();
+		ResultSet rsCapital = null;
+		ResultSet rsLanguages = null;
+		
+		tableCountries.clear();
+		
+		Country country;
+		Language[] temp;
+		ArrayList<Language> alLanguages = new ArrayList<Language>();
+		boolean official;
+		while (rsCountries.next()) {
+			country = new Country();
+			country.setCode(rsCountries.getString("Code"));
+			
+			//First the capital city is searched in the database
+			stmCapital = con.prepareStatement(
+					"SELECT * FROM city WHERE ID='" + rsCountries.getInt("Capital") + "'");
+			rsCapital = stmCapital.executeQuery();
+			if (rsCapital.next()) {
+				country.setCapital(new City(rsCapital.getInt("ID"),	//id
+						 rsCapital.getString("Name"),	//name
+						 rsCapital.getString("CountryCode"),	//country code
+						 rsCapital.getString("District"),	//district
+						 rsCapital.getInt("Population")));	//population);
+			}
+			
+			//The languages information is retreived from the database
+			alLanguages.clear();
+			stmLanguages = con.prepareStatement(
+					"SELECT * FROM countrylanguage WHERE CountryCode='" + 
+					country.getCode() + "'");
+			rsLanguages = stmLanguages.executeQuery();
+			while (rsLanguages.next()) {
+				if (rsLanguages.getString("IsOfficial").equals("T"))
+					official = true;
+				else	//equals("F")
+					official = false;
+				alLanguages.add(new Language(
+						rsLanguages.getString("CountryCode"), //country code
+						rsLanguages.getString("Language"), //name
+						official,
+						rsLanguages.getFloat("Percentage")));	//percentage
+			}			
+			temp = new Language[alLanguages.size()]; 
+			temp = (Language[])alLanguages.toArray(temp);
+			if (temp != null) {
+				country.setLanguages(temp);
+			}
+			
+			// The rest of the fields are filled
+			country.setName(rsCountries.getString("Name"));
+			country.setContinent(Continent.getByName(rsCountries.getString("Continent")));
+			country.setRegion(rsCountries.getString("Region"));
+			country.setSurfaceArea(rsCountries.getFloat("SurfaceArea"));
+			country.setIndependenceYear(rsCountries.getInt("IndepYear"));
+			country.setPopulation(rsCountries.getInt("Population"));
+			country.setLifeExpectancy(rsCountries.getFloat("LifeExpectancy"));
+			country.setGnp(rsCountries.getFloat("GNP"));
+			country.setGnpOld(rsCountries.getFloat("GNPOld"));
+			country.setLocalName(rsCountries.getString("LocalName"));
+			country.setGovernmentForm(rsCountries.getString("GovernmentForm"));
+			country.setHeadOfState(rsCountries.getString("HeadOfState"));
+			country.setCode2(rsCountries.getString("Code2"));
+	
+			//Insert the new country to the hash table
+			tableCountries.put(country.getCode(), country);
+		}
+
+		if (stmCapital != null) {
+			stmCapital.close();
+		}
+		
 	}
 
 	@Override
@@ -280,6 +292,38 @@ public class WorldModel implements Model {
 			}
 		}	
 	}
+
+	@Override
+	public Hashtable<String, Country> getCountryList(Continent continent) {
+		try {
+			if (dataSource == null) {
+				openDBConnection(credentials);
+			}
+			con = dataSource.getConnection();
+			PreparedStatement stmCountries = con.prepareStatement(
+					"SELECT * FROM country WHERE continent='" + continent.getName() + "'");
+			
+			fillTableCountries(stmCountries);
+			
+			stmCountries.close();
+			return tableCountries;
+			
+		} catch (SQLException e) {
+			System.err.println("SQL exception: " + e.getMessage());
+			return null;
+		} finally {
+			try {
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException e) {
+				System.err.println("Error closing the DB connection: " + e.getSQLState());
+				return null;
+			}
+		}
+			
+	}
+
  }
 
 
