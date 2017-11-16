@@ -1,7 +1,9 @@
 package eus.julenugalde.jspworld.model;
 
+import java.io.Serializable;
+
 /** Enumeration of the continents, as used in the 'world' database */
-public enum Continent {
+public enum Continent implements Serializable {
 	ASIA ("Asia"),
 	EUROPE ("Europe"),
 	NORTH_AMERICA ("North America"),

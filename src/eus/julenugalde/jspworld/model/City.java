@@ -1,7 +1,11 @@
 package eus.julenugalde.jspworld.model;
 
+import java.io.Serializable;
+
 /** Class that encapsulates the 'city' table information in the 'world' database */
-public class City {
+public class City implements Serializable {
+	private static final long serialVersionUID = 8845342093625111033L;
+
 	/** ID int(11) no null primary key autoincrement - City id */
 	private int id;
 	
@@ -101,7 +105,35 @@ public class City {
 	
 	@Override
 	public String toString() {
-		return name  + " - id:" + id + ", country:" + countryCode + ", district:" + district + 
-				", population:" + population;
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ \"id\": ");
+		if (id == 0) sb.append("null"); 
+		else sb.append("\"" + id + "\""); 
+		
+		sb.append(", \"name\": ");
+		if (name.equals("")) sb.append("null");
+		else sb.append("\"" + name + "\"");
+		
+		sb.append(", \"countryCode\": ");
+		if (countryCode.equals("")) sb.append("null");
+		else sb.append("\"" + countryCode + "\"");
+		
+		sb.append(", \"district\": ");
+		if (district.equals("")) sb.append("null");
+		else sb.append("\"" + district + "\"");
+		
+		sb.append(", \"population\": ");
+		if (population == 0) sb.append("null }");
+		else sb.append("\"" + population + "\" }");
+
+		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof City)) return false;
+		City city = (City)obj;
+		return (city.id == this.id);
 	}
 }

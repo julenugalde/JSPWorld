@@ -3,26 +3,30 @@ package eus.julenugalde.jspworld.model;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /** Utility class with static methods to visualize or store the data */
-public class DataManager {
+public class DataUtilities {
 	/** Returns a string with the information of the countries table 
 	 * 
 	 * @param tableCountries {@link Hashtable} with the list of countries to be displayed
 	 * @return {@link String} of <code>tableCountries.size()</code> lines, each of them containing
 	 * the <code>toString()</code> output of each country
 	 */
-	public static String getCountriesString(Hashtable<String, Country> tableCountries) {
+	public static String getCountriesString(LinkedHashMap<String, Country> tableCountries) {
 		Set<String> keys = tableCountries.keySet();
 		StringBuilder sb = new StringBuilder();
 		Iterator<String> iterator = keys.iterator();
 		Country c;
+		//int cuenta = 1;
 		while (iterator.hasNext()) {
+			//System.out.print("Country #" + (cuenta++) + "... ");
 			c = (Country)tableCountries.get(iterator.next());
+			//System.out.print(" - " + c.getName() + "...");
 			sb.append(c.toString() + System.getProperty("line.separator"));
+			//System.out.println("included");
 		}
 		return sb.toString();
 	}
@@ -33,7 +37,7 @@ public class DataManager {
 	 * @return {@link String} of <code>tableCities.size()</code> lines, each of them containing
 	 * the <code>toString()</code> output of each city
 	 */
-	public static String getCitiesString(Hashtable<Integer, City> tableCities) {
+	public static String getCitiesString(LinkedHashMap<Integer, City> tableCities) {
 		Set<Integer> keys = tableCities.keySet();
 		StringBuilder sb = new StringBuilder();
 		Iterator<Integer> iterator = keys.iterator();
@@ -51,7 +55,7 @@ public class DataManager {
 	 * @param file File location
 	 * @return <code>true</code> if the file was saved correctly, <code>false</code> otherwise.
 	 */
-	public static boolean exportCountriesToCSV(Hashtable<String, Country> tableCountries, File file) {
+	public static boolean exportCountriesToCSV(LinkedHashMap<String, Country> tableCountries, File file) {
 		
 		try {
 			if (!file.exists()) {

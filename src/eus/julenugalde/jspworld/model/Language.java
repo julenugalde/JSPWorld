@@ -1,8 +1,12 @@
 package eus.julenugalde.jspworld.model;
 
+import java.io.Serializable;
+
 /** Class that encapsulates the information of the 'countrylanguage' table in the 'world' database.
  * */
-public class Language {
+public class Language implements Serializable {
+	private static final long serialVersionUID = -6493310452783408296L;
+
 	/** CountryCode char(3) no null, primary key - 3-char country code */
 	private String countryCode;
 	
@@ -84,8 +88,34 @@ public class Language {
 	
 	@Override
 	public String toString() {
-		if (official) return name + ", official, " + percentage + "%";
-		else return name + ", not official, " + percentage + "%";
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{ \"countryCode\": ");
+		if (countryCode.equals("")) sb.append("null"); 
+		else sb.append("\"" + countryCode + "\""); 
+		
+		sb.append(", \"language\": ");
+		if (name.equals("")) sb.append("null");
+		else sb.append("\"" + name + "\"");
+
+		sb.append(", \"isOfficial\": ");
+		if (official) sb.append("true");
+		else sb.append("false");
+
+		sb.append(", \"percentage\": ");
+		if (percentage == 0) sb.append("null }");
+		else sb.append("\"" + percentage + "\" }");
+
+		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof Language)) return false;
+		Language language = (Language)obj;
+		return ((language.countryCode.equals(this.countryCode)) & 
+				(language.name.equals(this.name)));
 	}
 	
 }

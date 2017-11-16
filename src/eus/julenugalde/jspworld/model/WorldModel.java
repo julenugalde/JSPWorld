@@ -5,40 +5,41 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.dbcp.BasicDataSource;
-
-//TODO Improve this class reusing the code among the methods
 
 /** Implementation of the model using the 'world' database */
 public class WorldModel implements Model {
 	BasicDataSource dataSource;
 	ConnectionData credentials;
+	String schemaName;
 	Connection con;
-	Hashtable<String, Country> tableCountries;
+	LinkedHashMap<String, Country> tableCountries;
 	
 	
 	public WorldModel() {
-		tableCountries = new Hashtable<String, Country>();
+		tableCountries = new LinkedHashMap<String, Country>();
 		dataSource = null;
 		con = null;
 		credentials = new ConnectionData();
+		schemaName = "";
 	}	
 
 	@Override
-	public boolean openDBConnection(ConnectionData connectionData) {
+	public boolean openDBConnection(ConnectionData connectionData, String schemaName) {
 		try {
 			//Store the credentials for future connections
 			credentials.setUser(connectionData.getUser());
 			credentials.setPassword(connectionData.getPassword());
 			credentials.setAddress(connectionData.getAddress());
 			credentials.setPort(connectionData.getPort());
+			this.schemaName = schemaName;
 			
 			dataSource = new BasicDataSource();
 			dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 			dataSource.setUrl("jdbc:mysql://" + connectionData.getAddress() + 
-					":" + String.valueOf(connectionData.getPort()) + "/world" + 
+					":" + String.valueOf(connectionData.getPort()) + "/" + schemaName + 
 					"?autoReconnect=true&useSSL=false&amp;" + 
 					"useUnicode=true&amp;characterEncoding=utf8");
 			dataSource.setUsername(connectionData.getUser());
@@ -63,13 +64,14 @@ public class WorldModel implements Model {
 	}
 
 	@Override
-	public Hashtable<String, Country> getCountryList() {
+	public LinkedHashMap<String, Country> getCountryList() {
 		try {
 			if (dataSource == null) {
-				openDBConnection(credentials);
+				openDBConnection(credentials, schemaName);
 			}
 			con = dataSource.getConnection();
-			PreparedStatement stmCountries = con.prepareStatement("SELECT * FROM country");
+			PreparedStatement stmCountries = con.prepareStatement(
+					"SELECT * FROM country ORDER BY name");
 		
 			fillTableCountries(stmCountries);
 			
@@ -181,16 +183,17 @@ public class WorldModel implements Model {
 	}
 
 	@Override
-	public Hashtable<Integer, City> getCityListByCountry(String countryCode) {
+	public LinkedHashMap<Integer, City> getCityListByCountry(String countryCode) {
 		if (countryCode == null)  return null;
 		if (countryCode.length() != 3) return null;
 		
 		try {
-			Hashtable<Integer, City> tableCities = new Hashtable<Integer, City>();
-			
+			//Hashtable<Integer, City> tableCities = new Hashtable<Integer, City>();
+			LinkedHashMap<Integer, City> tableCities = new LinkedHashMap<Integer,City>();
 			con = dataSource.getConnection();
 			PreparedStatement stmCities = con.prepareStatement(
-					"SELECT * FROM city WHERE CountryCode='" + countryCode + "'");
+					"SELECT * FROM city WHERE CountryCode='" + countryCode + 
+					"' ORDER BY population DESC");
 			ResultSet rsCities = stmCities.executeQuery();
 			
 			City city;
@@ -223,7 +226,7 @@ public class WorldModel implements Model {
 	}
 
 	@Override
-	public Hashtable<Integer, City> getCityListByCountry(Country country) {
+	public LinkedHashMap<Integer, City> getCityListByCountry(Country country) {
 		if (country == null) return null;
 		if (country.getCode() == null) return null;
 		if (country.getCode().equals("")) return null;
@@ -239,7 +242,7 @@ public class WorldModel implements Model {
 		try {
 			con = dataSource.getConnection();
 			PreparedStatement stmCountries = con.prepareStatement(
-					"SELECT * FROM country WHERE Code='" + code + "'");
+					"SELECT * FROM country WHERE Code='" + code + "' ORDER BY population DESC");
 			PreparedStatement stmCapital = null;
 			ResultSet rsCountries = stmCountries.executeQuery();
 			ResultSet rsCapital = null;
@@ -297,14 +300,15 @@ public class WorldModel implements Model {
 	}
 
 	@Override
-	public Hashtable<String, Country> getCountryList(Continent continent) {
+	public LinkedHashMap<String, Country> getCountryList(Continent continent) {
 		try {
 			if (dataSource == null) {
-				openDBConnection(credentials);
+				openDBConnection(credentials, schemaName);
 			}
 			con = dataSource.getConnection();
 			PreparedStatement stmCountries = con.prepareStatement(
-					"SELECT * FROM country WHERE continent='" + continent.getName() + "'");
+					"SELECT * FROM country WHERE continent='" + continent.getName() + 
+					"' ORDER BY name");
 			
 			fillTableCountries(stmCountries);
 			
@@ -325,6 +329,43 @@ public class WorldModel implements Model {
 			}
 		}
 			
+	}
+	
+	public boolean addCity(City city) {
+		try {
+			if (dataSource == null) {
+				openDBConnection(credentials, schemaName);
+			}
+			con = dataSource.getConnection();
+			String sql = "INSERT INTO city (Name, CountryCode, District, Population) VALUES ('" +
+					city.getName() + "', '" + 
+					city.getCountryCode() + "', '" +
+					city.getDistrict() + "', '" + 
+					city.getPopulation() + "')";
+			System.out.println(sql);
+			PreparedStatement stmAddCity = con.prepareStatement(sql);
+			
+			int result = stmAddCity.executeUpdate();
+			
+			stmAddCity.close();
+			
+			return (result == 1);
+		} catch (SQLException e) {
+			System.err.println("SQL exception: " + e.getMessage());
+			return false;
+		} finally {
+			try {
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException e) {
+				System.err.println("Error closing the DB connection: " + e.getSQLState());
+				return false;
+			}
+		}
+		
+		
+		
 	}
 
  }

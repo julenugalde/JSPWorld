@@ -1,7 +1,7 @@
 package eus.julenugalde.jspworld.controller;
 
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import eus.julenugalde.jspworld.model.*;
 
 /**
- * Servlet implementation class Controller
+ * Servlet implementation class JSPWorld
  */
 @WebServlet(name="/JSPWorld", 
 			description = "Controller servlet",
@@ -23,6 +23,7 @@ public class JSPWorld extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Model model;
     private ConnectionData connectionData;
+    private String schemaName;
     
     /**
      * @see HttpServlet#HttpServlet()
@@ -35,7 +36,12 @@ public class JSPWorld extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
     	super.init(config);
     	model = new WorldModel();
+    	schemaName = "world";
     	connectionData = new ConnectionData("jspworld", "jspworld", "localhost", 3306);
+    	
+    	//Alternative: database in db4free.net with subset of information
+    	//schemaName = "worldprobak";
+    	//connectionData = new ConnectionData("jspworld", "jspworld", "db4free.net", 3307);
     }
     
 	/**
@@ -52,7 +58,7 @@ public class JSPWorld extends HttpServlet {
 		}
 		else {	//show information on a country's major cities
 			//check if the country code is valid
-			model.openDBConnection(connectionData);
+			model.openDBConnection(connectionData, schemaName);
 			Country country = model.getCountryByCode(countryCode);
 			model.closeDBConnection();
 			
@@ -73,32 +79,30 @@ public class JSPWorld extends HttpServlet {
 
 
 	private void processCitiesInfo(HttpServletRequest request, Country country) {
-		model.openDBConnection(connectionData);
-		Hashtable<Integer, City> tableCities = model.getCityListByCountry(country);
+		model.openDBConnection(connectionData, schemaName);
+		LinkedHashMap<Integer, City> tableCities = model.getCityListByCountry(country);
 		request.setAttribute("tableCities", tableCities);
 		request.setAttribute("country", country);
 		model.closeDBConnection();
 	}
 
 	private void processCountriesInfo(HttpServletRequest request) {
-		if (request.getParameter("continent") == null) {
-			//System.out.println("home page");
+		String selectedContinent = request.getParameter("continent");
+		if (selectedContinent == null) {//Show all continents by default
+			selectedContinent = "All";			
+		}				
+		//System.out.println("Selected continent: " + selectedContinent);
+		LinkedHashMap<String, Country> tableCountries;
+		model.openDBConnection(connectionData, schemaName);
+		if (selectedContinent.equals("All")) {
+			tableCountries = model.getCountryList();
 		}
 		else {
-			String selectedContinent = request.getParameter("continent");
-			System.out.println("Continente elegido: " + selectedContinent);
-			Hashtable<String, Country> tableCountries;
-			model.openDBConnection(connectionData);
-			if (selectedContinent.equals("All")) {
-				tableCountries = model.getCountryList();
-			}
-			else {
-				tableCountries = model.getCountryList(Continent.getByName(selectedContinent));
-			}
-			request.setAttribute("tableCountries", tableCountries);
-			request.setAttribute("continent", selectedContinent); 
-			model.closeDBConnection();
+			tableCountries = model.getCountryList(Continent.getByName(selectedContinent));
 		}
+		request.setAttribute("tableCountries", tableCountries);
+		request.setAttribute("continent", selectedContinent); 
+		model.closeDBConnection();		
 	}
 
 	/**

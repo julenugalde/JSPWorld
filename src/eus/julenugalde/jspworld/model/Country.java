@@ -1,7 +1,11 @@
 package eus.julenugalde.jspworld.model;
 
+import java.io.Serializable;
+
 /** Class that encapsulates the 'country' data information in the 'world' database */
-public class Country {
+public class Country implements Serializable {
+	private static final long serialVersionUID = 2170741444010160188L;
+
 	/** Code char(3) primary key no null - country code */
 	private String code;
 	
@@ -53,7 +57,7 @@ public class Country {
 	public Country() {
 		setCode("");
 		setName("");
-		setContinent(Continent.ASIA);
+		setContinent(null);
 		setRegion("");
 		setSurfaceArea((float) 0.00);
 		setIndependenceYear(0);
@@ -64,7 +68,7 @@ public class Country {
 		setLocalName("");
 		setGovernmentForm("");
 		setHeadOfState("");
-		setCapital(new City());
+		setCapital(null);	//TODO VER SI FUNCIONA BIEN. ANTES ERA SETCAPITAL(NEW CITY())
 		setCode2("");
 		setLanguages(null);
 	}
@@ -282,14 +286,90 @@ public class Country {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(name + " {code=" + code + ", region=" + region + ", population=" + population);
-		sb.append(", continent=" + continent.getName() + ", capital=" + capital.getName());
-		sb.append(", capital_population=" + capital.getPopulation());
-		if (languages.length == 0) sb.append(", no languages");
-		for (int i=0; i<languages.length; i++) {
-			sb.append(", language" + (i+1) + "={" + languages[i].toString() + "}");
+		
+		sb.append("{ \"code\": ");
+		if (code.equals("")) sb.append("null"); 
+		else sb.append("\"" + code + "\""); 
+		
+		sb.append(", \"name\": ");
+		if (name.equals("")) sb.append("null");
+		else sb.append("\"" + name + "\"");
+		
+		sb.append(", \"continent\": ");
+		if (continent == null) sb.append("null");
+		else sb.append("\"" + continent.getName() + "\"");
+		
+		sb.append(", \"region\": ");
+		if (region.equals("")) sb.append("null");
+		else sb.append("\"" + region + "\"");
+		
+		sb.append(", \"surfaceArea\": ");
+		if (surfaceArea == 0) sb.append("null}");
+		else sb.append("\"" + surfaceArea + "\"");
+		
+		sb.append(", \"indepYear\": ");
+		if (independenceYear == 0) sb.append("null}");
+		else sb.append("\"" + independenceYear + "\"");
+		
+		sb.append(", \"population\": ");
+		if (population == 0) sb.append("null}");
+		else sb.append("\"" + population + "\"");
+		
+		sb.append(", \"lifeExpectancy\": ");
+		if (lifeExpectancy == 0) sb.append("null}");
+		else sb.append("\"" + lifeExpectancy + "\"");
+		
+		sb.append(", \"gnp\": ");
+		if (gnp == 0) sb.append("null");
+		else sb.append("\"" + gnp + "\"");
+
+		sb.append(", \"gnpOld\": ");
+		if (gnpOld == 0) sb.append("null");
+		else sb.append("\"" + gnpOld + "\"");
+
+		sb.append(", \"localName\": ");
+		if (localName.equals("")) sb.append("null");
+		else sb.append("\"" + localName + "\"");
+
+		sb.append(", \"governmentForm\": ");
+		if (governmentForm.equals("")) sb.append("null");
+		else sb.append("\"" + governmentForm + "\"");
+
+		sb.append(", \"headOfState\": ");
+		if (headOfState == null) sb.append("null");
+		else if (headOfState.equals("")) sb.append("null");
+		else sb.append("\"" + headOfState + "\"");
+
+		sb.append(", \"capital\": ");
+		if (capital == null) sb.append("null");
+		else sb.append(capital.toString());
+		
+		sb.append(", \"code2\": ");
+		if (code2.equals("")) sb.append("null");
+		else sb.append("\"" + code2 + "\"");
+
+		sb.append(", \"languages\": ");
+		if (languages == null) sb.append("null");
+		else if (languages.length == 0) sb.append("null");
+		else  {
+			sb.append("[ ");
+			for (int i=0; i<languages.length; i++) {
+				sb.append(languages[i].toString() + ", ");
+			}
+			sb.delete(sb.length()-2, sb.length());
+			sb.append(" ]");
 		}
+
+		sb.append(" }");
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof Country)) return false;
+		Country country = (Country)obj;
+		return (country.code.equals(this.code));
 	}
 
 	/**

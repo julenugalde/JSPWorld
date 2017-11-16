@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ page import="eus.julenugalde.jspworld.model.*" %>
-<%@ page import="java.util.Hashtable, java.util.Set, java.util.Iterator, java.util.Locale" %>
+<%@ page import="java.util.LinkedHashMap, java.util.Set, java.util.Iterator, java.util.Locale" %>
 <%@ page import="java.text.DecimalFormat, java.text.DecimalFormatSymbols" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -13,8 +13,8 @@
 <body>
 <h3>Major cities in <%= ((Country)request.getAttribute("country")).getName() %></h3>
 <%
-Hashtable<Integer,City> tableCities = 
-		(Hashtable<Integer,City>)(request.getAttribute("tableCities"));
+LinkedHashMap<Integer,City> tableCities = 
+		(LinkedHashMap<Integer,City>)(request.getAttribute("tableCities"));
 
 if (tableCities != null) {	
 	if (tableCities.size() > 0) {
@@ -23,7 +23,8 @@ if (tableCities != null) {
 		DecimalFormat df = new DecimalFormat ("##,##0", DecimalFormatSymbols.getInstance());
 		
 		out.append("<table>");
-		out.append("<tr><th>Name</th>");
+		out.append("<tr><th>Id</th>");
+		out.append("<th>Name</th>");
 		out.append("<th>District</th>");
 		out.append("<th>Population</th></tr>");
 		
@@ -31,7 +32,8 @@ if (tableCities != null) {
 		while (iterator.hasNext()){
 			city = tableCities.get(iterator.next());
 			
-			out.append("<tr><td><a href='https://en.wikipedia.org/wiki/"+ city.getName() + "'>" +
+			out.append("<tr><td>" + city.getId() + "</td>");
+			out.append("<td><a href='https://en.wikipedia.org/wiki/"+ city.getName() + "'>" +
 				city.getName() +"</a></td>");
 			out.append("<td>" + city.getDistrict() + "</td>");
 			out.append("<td>" + df.format(city.getPopulation()) + "</td>");
@@ -55,6 +57,20 @@ else {
 	out.append("<p><font color='RED'>Country information unavailable.</font></p>");
 }
 %>
+<br /><br />
+<h3>Add new city</h3>
+<form action="JSPWorld" method="post">
+	<label>Name: </label>
+	<input type="text" name="name" value=""><br>
+	<label>Country: </label>
+	<input type="text" name="country" value=
+	"<%= ((Country)request.getAttribute("country")).getName() %>"><br>
+	<label>District: </label>
+	<input type="text" name="district" value=""><br>
+	<label>Population: </label>
+	<input type="text" name="population" value=""><br>
+	<input type="submit" value="Submit">
+</form>
 
 </body>
 </html>

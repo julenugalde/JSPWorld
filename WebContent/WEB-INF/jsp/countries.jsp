@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.Enumeration,	java.util.Hashtable, java.util.Set, 
+<%@ page import="java.util.Enumeration,	java.util.LinkedHashMap, java.util.Set, 
 				java.util.Iterator, java.util.Locale" %>
 <%@ page import="java.text.DecimalFormat, java.text.DecimalFormatSymbols" %>
 <%@ page import="eus.julenugalde.jspworld.model.*" %>
@@ -38,8 +38,8 @@ else {
 </form>
 
 <%
-Hashtable<String,Country> tableCountries = 
-		(Hashtable<String,Country>)(request.getAttribute("tableCountries"));
+LinkedHashMap<String,Country> tableCountries = 
+		(LinkedHashMap<String,Country>)(request.getAttribute("tableCountries"));
 
 if (tableCountries != null) {	
 	Set<String> keys = tableCountries.keySet();
@@ -55,7 +55,7 @@ if (tableCountries != null) {
 	out.append("<th>Government form</th>");
 	out.append("<th>Head of State</th>");
 	out.append("<th>Independence year</th>");
-	out.append("<th>Languages</th></tr>");
+	out.append("<th><b>Official languages</b><br /><i>Unofficial languages</i></th></tr>");
 	
 	Country country;
 	Language[] languages;
@@ -70,10 +70,13 @@ if (tableCountries != null) {
 				country.getLocalName() + ")</td>");
 		out.append("<td>" + country.getCode() + "<br />(<a href='https://en.wikipedia.org/wiki/." +
 				country.getCode2().toLowerCase() + "'>" + country.getCode2() + "</a>)</td>");
-		out.append("<td><a href='http://en.wikipedia.org/wiki/" + 
-				country.getCapital().getName() + "'>" + 
-				country.getCapital().getName() + "</a>, " +  
-				country.getCapital().getDistrict() + "</td>");
+		if (country.getCapital() == null) out.append("<td>N/A</td>");
+		else {
+			out.append("<td><a href='http://en.wikipedia.org/wiki/" + 
+					country.getCapital().getName() + "'>" + 
+					country.getCapital().getName() + "</a>, " +  
+					country.getCapital().getDistrict() + "</td>");
+		}
 		out.append("<td>" + country.getRegion() + ", " + 
 				country.getContinent().getName() + "</td>");
 		out.append("<td>" + df.format(country.getSurfaceArea()) + "&nbsp;km<sup>2</sup></td>");
@@ -82,8 +85,17 @@ if (tableCountries != null) {
 		out.append("<td>" + country.getGovernmentForm() + "</td>");
 		out.append("<td>" + country.getHeadOfState() + "</td>");
 		out.append("<td>" + country.getIndependenceYear() + "</td><td>");
-		for (int i=0; i<languages.length; i++) {
-			out.append(languages[i].toString() + "<br />");
+		if (languages == null) out.append("N/A");
+		else if (languages.length == 0) out.append("N/A");
+		else {
+			for (int i=0; i<languages.length; i++) {
+				if (languages[i].isOfficial()) out.append("<b>");
+				else out.append("<i>");
+				out.append(languages[i].getName() + " (");
+				out.append(df.format(languages[i].getPercentage()) + "%)<br />");
+				if (languages[i].isOfficial()) out.append("</b>");
+				else out.append("</i>");
+			}
 		}
 		out.append("</td></tr>");				
 

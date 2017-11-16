@@ -1,6 +1,7 @@
 package eus.julenugalde.jspworld.model;
 
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 /** Abstract model for the application. Contains methods to retreive countries and cities data from
  * the source.<br /><br /> 
@@ -47,24 +48,25 @@ public interface Model {
 	/** Establish a connection to the database.
 	 * 
 	 * @param connectionData Information of the server address and port, user name and password.
+	 * @param schemaName Name of the DB schema where the world tables are included.
 	 * @return <code>true</code> if the connection was opened correctly, <code>false</code> otherwise.
 	 */
-	public boolean openDBConnection(ConnectionData connectionData);
+	public boolean openDBConnection(ConnectionData connectionData, String schemaName);
 	
 	/** Retreives the information of all the world countries
 	 * 
-	 * @return {@link Hashtable} with the information of all the countries. The key used is the 
+	 * @return {@link LinkedHashMap} with the information of all the countries. The key used is the 
 	 * 3-character country code
 	 */
-	public Hashtable<String,Country> getCountryList();
+	public LinkedHashMap<String,Country> getCountryList();
 	
 	/** Retreives the information of the countries from a continent
 	 * 
 	 * @param continent Element in the {@link Continent} enumeration
-	 * @return {@link Hashtable} with the information of the countries in the specified continent.
+	 * @return {@link LinkedHashMap} with the information of the countries in the specified continent.
 	 * The key used is the 3-character country code
 	 */
-	public Hashtable<String,Country> getCountryList(Continent continent);
+	public LinkedHashMap<String,Country> getCountryList(Continent continent);
 	
 	/** Retrieves the information of a country identified by the country code.
 	 * 
@@ -77,18 +79,26 @@ public interface Model {
 	/** Retreives the information of all the cities which are part of a country.
 	 * 
 	 * @param countryCode {@link String} with the 3-character country code.
-	 * @return {@link Hashtable} with the information of all the cities in the country. The key
+	 * @return {@link LinkedHashMap} with the information of all the cities in the country. The key
 	 * used is the city identifier (<code>city.getId()</code>).
 	 */
-	public Hashtable<Integer, City> getCityListByCountry(String countryCode);
+	public LinkedHashMap<Integer, City> getCityListByCountry(String countryCode);
 	
 	/** Retreives the information of all the cities which are part of a country.
 	 * 
 	 * @param country Instance of {@link Country} with the country's information.
-	 * @return {@link Hashtable} with the information of all the cities in the country. The key
+	 * @return {@link LinkedHashMap} with the information of all the cities in the country. The key
 	 * used is the city identifier (<code>city.getId()</code>).
 	 */
-	public Hashtable<Integer, City> getCityListByCountry(Country country);
+	public LinkedHashMap<Integer, City> getCityListByCountry(Country country);
+	
+	/** Add new city to the database. The id value in the {@link City} object will not be taken
+	 * into account and the database will establish one. It can happen that there are duplicate
+	 * values (e.g. cities with the same name)
+	 * @param city City to be inserted
+	 * @return <code>true</code> if the insertion was successful, <code>false</code> otherwise
+	 */
+	public boolean addCity(City city);
 	
 	/** Attempts to close the connection with the database.
 	 */
