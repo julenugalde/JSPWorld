@@ -1,41 +1,46 @@
-@charset "ISO-8859-1";
+p, label {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+}
 
 h3 {
 	color: #111111;
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 12;
+	font-size: 18px;
 	font-weight: bold;
 }
 
 p {
 	color: #555555;
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 10;
+	font-size: 12px;
 	font-weight: normal;	
 }
 
 table {  
     color: #333;
     font-family: Helvetica, Arial, sans-serif;
-    width: 640px; 
+    font-size: 12px;
     border-collapse: 
     collapse; border-spacing: 0; 
 }
 
 td, th {  
     border: 1px solid transparent; /* No more visible border */
-    height: 30px; 
     transition: all 0.3s;  /* Simple transition for hover effect */
+    font-size: 12px;
 }
 
 th {  
     background: #DFDFDF;  /* Darken header a bit */
     font-weight: bold;
+    height: 35px; 
 }
 
 td {  
     background: #FAFAFA;
     text-align: center;
+    height: 30px; 
 }
 
 /* Cells in even rows (2,4,6...) are one color */        

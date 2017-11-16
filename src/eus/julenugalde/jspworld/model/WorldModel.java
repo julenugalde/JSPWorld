@@ -39,9 +39,12 @@ public class WorldModel implements Model {
 			dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 			dataSource.setUrl("jdbc:mysql://" + connectionData.getAddress() + 
 					":" + String.valueOf(connectionData.getPort()) + "/world" + 
-					"?autoReconnect=true&useSSL=false");
+					"?autoReconnect=true&useSSL=false&amp;" + 
+					"useUnicode=true&amp;characterEncoding=utf8");
 			dataSource.setUsername(connectionData.getUser());
 			dataSource.setPassword(connectionData.getPassword());
+			dataSource.setConnectionProperties("useUnicode=yes");
+			dataSource.setConnectionProperties("characterEncoding=utf8");
 			con = dataSource.getConnection();
 			return !(con == null);
 		} catch (SQLException e) {

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.Enumeration,	java.util.Hashtable, java.util.Set, 
 				java.util.Iterator, java.util.Locale" %>
 <%@ page import="java.text.DecimalFormat, java.text.DecimalFormatSymbols" %>
@@ -8,13 +7,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet" type="text/css" />
 <title>Countries</title>
 </head>
 <body>
-<h3>List of countries in <%= (String)request.getAttribute("continent") %></h3>
-
-<form action="Controller" method="post">
+<h3>List of countries in 
+<%
+String continent = (String)request.getAttribute("continent");
+if (continent.endsWith("All")) {
+	out.write("the world");
+}
+else {
+	out.write(continent);
+}
+%></h3>
+<form action="JSPWorld" method="post">
 	<label>Continent: </label>
 	<select name="continent">
 		<option value="All">All continents</option>
@@ -37,13 +45,16 @@ if (tableCountries != null) {
 	Set<String> keys = tableCountries.keySet();
 	Iterator<String> iterator = keys.iterator();
 	out.append("<table>");
-	out.append("<tr><th>Name (Local name)</th>");
-	out.append("<th>Code</th>");
+	out.append("<tr><th>Name<br />(Local name)</th>");
+	out.append("<th>Codes</th>");
+	out.append("<th>Capital, District</th>");
 	out.append("<th>Region, Continent</th>");
 	out.append("<th>Surface area</th>");
 	out.append("<th>Population</th>");
 	out.append("<th>Gross National Product</th>");
-	out.append("<th>Capital, District</th>");
+	out.append("<th>Government form</th>");
+	out.append("<th>Head of State</th>");
+	out.append("<th>Independence year</th>");
 	out.append("<th>Languages</th></tr>");
 	
 	Country country;
@@ -54,17 +65,23 @@ if (tableCountries != null) {
 		country = tableCountries.get(iterator.next());
 		languages = country.getLanguages();
 
-		out.append("<tr><td><a href='/JSPWorld?countryCode="+ country.getCode() + "'>" + 
+		out.append("<tr><td><a href='/JSPWorld/JSPWorld?countryCode="+ country.getCode() + "'>" + 
 				country.getName() + "</a><br />(" + 
 				country.getLocalName() + ")</td>");
-		out.append("<td>" + country.getCode() + "</td>");
+		out.append("<td>" + country.getCode() + "<br />(<a href='https://en.wikipedia.org/wiki/." +
+				country.getCode2().toLowerCase() + "'>" + country.getCode2() + "</a>)</td>");
+		out.append("<td><a href='http://en.wikipedia.org/wiki/" + 
+				country.getCapital().getName() + "'>" + 
+				country.getCapital().getName() + "</a>, " +  
+				country.getCapital().getDistrict() + "</td>");
 		out.append("<td>" + country.getRegion() + ", " + 
 				country.getContinent().getName() + "</td>");
 		out.append("<td>" + df.format(country.getSurfaceArea()) + "&nbsp;km<sup>2</sup></td>");
 		out.append("<td>" + df.format(country.getPopulation()) + "</td>");
 		out.append("<td>" + df.format(country.getGnp()) + "&nbsp;M$</td>");
-		out.append("<td>" + country.getCapital().getName() + ", " +  
-				country.getCapital().getDistrict() + "</td><td>");
+		out.append("<td>" + country.getGovernmentForm() + "</td>");
+		out.append("<td>" + country.getHeadOfState() + "</td>");
+		out.append("<td>" + country.getIndependenceYear() + "</td><td>");
 		for (int i=0; i<languages.length; i++) {
 			out.append(languages[i].toString() + "<br />");
 		}

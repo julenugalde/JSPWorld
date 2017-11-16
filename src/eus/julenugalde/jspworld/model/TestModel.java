@@ -1,6 +1,5 @@
 package eus.julenugalde.jspworld.model;
 
-import java.io.IOException;
 import java.util.Hashtable;
 
 /** Test class for checking the model, using the standard output */

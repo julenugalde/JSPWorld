@@ -16,10 +16,10 @@ import eus.julenugalde.jspworld.model.*;
 /**
  * Servlet implementation class Controller
  */
-@WebServlet(name="/Controller", 
+@WebServlet(name="/JSPWorld", 
 			description = "Controller servlet",
-			urlPatterns = { "/" })
-public class Controller extends HttpServlet {
+			urlPatterns = { "/JSPWorld" })
+public class JSPWorld extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Model model;
     private ConnectionData connectionData;
@@ -27,7 +27,7 @@ public class Controller extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Controller() {
+    public JSPWorld() {
         super();
     }
 
@@ -43,35 +43,27 @@ public class Controller extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		
 		RequestDispatcher rd; 		
-		
-		/*System.out.println("DEBUG: " + (new java.util.Date()).toString());
-		java.util.Enumeration<String> attributes = request.getParameterNames();
-		String attribute;
-		while (attributes.hasMoreElements()) {
-			attribute = attributes.nextElement();
-			System.out.println("Attribute " + attribute + " = " + request.getParameter(attribute));
-		}*/
-		
 
 		String countryCode = request.getParameter("countryCode");
 		if (countryCode == null) {	//no country specified. Show country list
 			rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/countries.jsp");
 			processCountriesInfo(request);
 		}
-		else {	//show country information
-			//TODO el problema esta aquí, lanza nullpointerexception al ejecutar getcountrybyname()
-			if (model == null) System.out.println("model null");
-			if (countryCode.length() != 3) System.out.println("country code incorrecto");
+		else {	//show information on a country's major cities
+			//check if the country code is valid
+			model.openDBConnection(connectionData);
 			Country country = model.getCountryByCode(countryCode);
-			if (country == null) {	//The country could not be found
-				System.out.println("DEBUG: not found");
-				request.setAttribute("errorText", "The code does not correspond to any country.");
+			model.closeDBConnection();
+			
+			if (country == null) {	//country code not valid --> show error page
+				//System.out.println("DEBUG: not found");
+				request.setAttribute("errorText", 
+						"The '" + countryCode + "' code does not correspond to any country.");
 				rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/error.jsp");
 			}
-			else {
-				System.out.println("DEBUG: country " + country.getName() + " found");
+			else {	//country code valid --> display cities page
+				//System.out.println("DEBUG: country " + country.getName() + " found");
 				rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/cities.jsp");
 				processCitiesInfo(request, country);
 			}
@@ -114,7 +106,6 @@ public class Controller extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
