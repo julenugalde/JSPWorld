@@ -50,7 +50,7 @@ public class JSPWorld extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		RequestDispatcher rd; 		
-
+		
 		String countryCode = request.getParameter("countryCode");
 		if (countryCode == null) {	//no country specified. Show country list
 			rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/countries.jsp");
@@ -69,9 +69,13 @@ public class JSPWorld extends HttpServlet {
 				rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/error.jsp");
 			}
 			else {	//country code valid --> display cities page
-				//System.out.println("DEBUG: country " + country.getName() + " found");
+				//System.out.println("DEBUG: new city " + request.getParameter("name") + " found");
+				String cName = request.getParameter("name");
 				rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/cities.jsp");
-				processCitiesInfo(request, country);
+				if (cName != null) {	//Add new city 
+					processAddCity(request, country);
+				}
+				processCitiesInfo(request, country);				
 			}
 		}
 		rd.forward(request, response);
@@ -84,6 +88,38 @@ public class JSPWorld extends HttpServlet {
 		request.setAttribute("tableCities", tableCities);
 		request.setAttribute("country", country);
 		model.closeDBConnection();
+	}
+	
+	private void processAddCity(HttpServletRequest request, Country country) {
+		try {
+			model.openDBConnection(connectionData, schemaName);
+			City city = new City();
+			
+			//Get country code - char(3)
+			String userInput = country.getCode().trim();
+			int maxLength = (userInput.length() < 10) ? userInput.length() : 10;
+			city.setCountryCode(userInput.substring(0, maxLength));
+			
+			//Get city name - char(35)
+			userInput = request.getParameter("name").trim();
+			maxLength = (userInput.length() < 35) ? userInput.length() : 35;
+			city.setName(userInput.substring(0, maxLength));
+			
+			//Get district - char(20)
+			userInput = request.getParameter("district").trim();
+			maxLength = (userInput.length() < 20) ? userInput.length() : 20;
+			city.setDistrict(userInput.substring(0, maxLength));
+			
+			//Get population
+			int population = Integer.parseInt(request.getParameter("population").trim());
+			city.setPopulation(population);
+			
+			model.addCity(city);
+			model.closeDBConnection();
+		} catch (NumberFormatException e) {
+			
+		}
+		
 	}
 
 	private void processCountriesInfo(HttpServletRequest request) {

@@ -59,11 +59,11 @@ else {
 %>
 <br /><br />
 <h3>Add new city</h3>
-<form action="JSPWorld" method="post">
+<form action="JSPWorld?countryCode=<%=request.getParameter("countryCode")%>" method="post">
 	<label>Name: </label>
 	<input type="text" name="name" value=""><br>
 	<label>Country: </label>
-	<input type="text" name="country" value=
+	<input type="text" name="country" readonly="readonly" value=
 	"<%= ((Country)request.getAttribute("country")).getName() %>"><br>
 	<label>District: </label>
 	<input type="text" name="district" value=""><br>

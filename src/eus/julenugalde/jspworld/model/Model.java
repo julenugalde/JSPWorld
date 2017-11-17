@@ -1,10 +1,9 @@
 package eus.julenugalde.jspworld.model;
 
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
-/** Abstract model for the application. Contains methods to retreive countries and cities data from
- * the source.<br /><br /> 
+/** Abstract model for the application. Contains methods to retreive and update data of
+ * countries and cities from the source.<br /><br /> 
  * Information on the 'world' database used:
 <br /><br /><code>CREATE TABLE city (<br />
 &nbsp;  ID int NOT NULL,<br />

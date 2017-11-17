@@ -68,7 +68,7 @@ public class Country implements Serializable {
 		setLocalName("");
 		setGovernmentForm("");
 		setHeadOfState("");
-		setCapital(null);	//TODO VER SI FUNCIONA BIEN. ANTES ERA SETCAPITAL(NEW CITY())
+		setCapital(null);	
 		setCode2("");
 		setLanguages(null);
 	}

@@ -336,19 +336,27 @@ public class WorldModel implements Model {
 			if (dataSource == null) {
 				openDBConnection(credentials, schemaName);
 			}
+			//There might be two cities with the same name in the same country, 
+			//but not with the same name+district+country
 			con = dataSource.getConnection();
-			String sql = "INSERT INTO city (Name, CountryCode, District, Population) VALUES ('" +
+			String sql = "SELECT * FROM city WHERE "+ 
+					"Name='" + city.getName() + "' AND " +  
+					"CountryCode='" + city.getCountryCode() + "' AND " + 
+					"District='" + city.getDistrict() + "'";
+			//System.out.println("DEBUG: " + sql);
+			
+			ResultSet rs = con.prepareCall(sql).executeQuery();
+			if (rs.next()) return false;
+			
+			sql = "INSERT INTO city (Name, CountryCode, District, Population) VALUES ('" +
 					city.getName() + "', '" + 
 					city.getCountryCode() + "', '" +
 					city.getDistrict() + "', '" + 
 					city.getPopulation() + "')";
-			System.out.println(sql);
 			PreparedStatement stmAddCity = con.prepareStatement(sql);
 			
 			int result = stmAddCity.executeUpdate();
-			
 			stmAddCity.close();
-			
 			return (result == 1);
 		} catch (SQLException e) {
 			System.err.println("SQL exception: " + e.getMessage());
