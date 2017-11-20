@@ -61,8 +61,8 @@ else {
 <h3>Add a new city</h3>
 <form action="JSPWorld?countryCode=<%=request.getParameter("countryCode")%>" method="post">
 <table class="newcityform">
-	<tr class="newcityform">
-		<td class="newcityform"><label>City name: </label></td>
+	<tr>
+		<td><label>City name: </label></td>
 		<td><input type="text" name="name" value=""></td>
 	</tr><tr>
 		<td><label>Country: </label></td>
@@ -76,6 +76,7 @@ else {
 		<td><input type="text" name="population" value=""></td>
 	</tr><tr>
 		<td><input type="submit" value="Submit"></td>
+		<td></td>
 	</tr>
 </table>
 </form>

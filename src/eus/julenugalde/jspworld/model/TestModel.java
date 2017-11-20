@@ -1,6 +1,6 @@
 package eus.julenugalde.jspworld.model;
 
-import java.util.LinkedHashMap;
+//import java.util.LinkedHashMap;
 
 /** Test class for checking the model, using the standard output */
 public class TestModel {

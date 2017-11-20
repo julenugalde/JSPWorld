@@ -1,15 +1,19 @@
 package eus.julenugalde.jspworld.controller;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.sun.xml.internal.ws.api.policy.PolicyResolver.ServerContext;
 
 import eus.julenugalde.jspworld.model.*;
 
@@ -38,10 +42,27 @@ public class JSPWorld extends HttpServlet {
     	model = new WorldModel();
     	schemaName = "world";
     	connectionData = new ConnectionData("jspworld", "jspworld", "localhost", 3306);
-    	
     	//Alternative: database in db4free.net with subset of information
     	//schemaName = "worldprobak";
     	//connectionData = new ConnectionData("jspworld", "jspworld", "db4free.net", 3307);
+    	
+    	ServletContext servletContext = getServletContext();
+    	Enumeration<String> enumeration = servletContext.getInitParameterNames();
+    	System.out.println("Servlet initialization parameters:");
+    	String name;
+    	while (enumeration.hasMoreElements()) {
+    		name = enumeration.nextElement();
+    		System.out.println("\t- " + name + "='" + 
+    					servletContext.getInitParameter(name) + "'");
+    	}
+    	enumeration = servletContext.getAttributeNames();
+    	System.out.println("Servlet initialization attributes:");
+    	while (enumeration.hasMoreElements()) {
+    		name = enumeration.nextElement();
+    		System.out.println("\t- " + name + "='" + 
+    					servletContext.getAttribute(name) + "'");
+    	}
+    	
     }
     
 	/**
@@ -50,6 +71,7 @@ public class JSPWorld extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		RequestDispatcher rd; 		
+		System.out.println("request.getRemoteAddr(): " + request.getRemoteAddr());		
 		
 		String countryCode = request.getParameter("countryCode");
 		if (countryCode == null) {	//no country specified. Show country list
