@@ -58,18 +58,26 @@ else {
 }
 %>
 <br /><br />
-<h3>Add new city</h3>
+<h3>Add a new city</h3>
 <form action="JSPWorld?countryCode=<%=request.getParameter("countryCode")%>" method="post">
-	<label>Name: </label>
-	<input type="text" name="name" value=""><br>
-	<label>Country: </label>
-	<input type="text" name="country" readonly="readonly" value=
-	"<%= ((Country)request.getAttribute("country")).getName() %>"><br>
-	<label>District: </label>
-	<input type="text" name="district" value=""><br>
-	<label>Population: </label>
-	<input type="text" name="population" value=""><br>
-	<input type="submit" value="Submit">
+<table class="newcityform">
+	<tr class="newcityform">
+		<td class="newcityform"><label>City name: </label></td>
+		<td><input type="text" name="name" value=""></td>
+	</tr><tr>
+		<td><label>Country: </label></td>
+		<td><input type="text" name="country" readonly="readonly" value=
+			"<%= ((Country)request.getAttribute("country")).getName() %>"></td>
+	</tr><tr>
+		<td><label>District: </label></td>
+		<td><input type="text" name="district" value=""></td>
+	</tr><tr>
+		<td><label>Population: </label></td>
+		<td><input type="text" name="population" value=""></td>
+	</tr><tr>
+		<td><input type="submit" value="Submit"></td>
+	</tr>
+</table>
 </form>
 
 </body>
