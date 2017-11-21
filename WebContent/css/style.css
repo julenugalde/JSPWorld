@@ -3,7 +3,7 @@
     --fresh-water-color: #88BBD6;
     --plaster-color: #787878;
     --linen-color: #E9E9E9;
-    --h-font-color: #000000;
+    --h-font-color: #222222;
     --p-font-color: #333333;
     --td-font-color: #333333;
     --th-font-color: #EEEEEE;
@@ -19,19 +19,18 @@ body {
 	background: var(--linen-color);
 }
 
-p, label {
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 0.8em;
-}
-
 h3 {
+	margin-left: 10px;
+	margin-right: 20px;
 	color: var(--h-font-color);
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 1em;
+	font-size: 1.5em;
 	font-weight: bold;
 }
 
-p {
+p, label {
+	margin-left: 10px;
+	margin-right: 10px;
 	color: var(--p-font-color);
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 0.8em;
@@ -39,17 +38,22 @@ p {
 }
 
 table {  
+	margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
     color: var(--td-font-color);
     font-family: Helvetica, Arial, sans-serif;
     font-size: 1em;
-    border-collapse: 
-    collapse; border-spacing: 0; 
+    border-collapse: collapse; 
+    border-spacing: 0; 
 }
 
 td, th {  
     border: 1px solid transparent; /* No more visible border */
     transition: all 0.3s;  /* Simple transition for hover effect */
     font-size: 0.8em;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 th {  
@@ -109,4 +113,8 @@ a:hover {
 a:active {
   background: var(--a-background-color);
   color: var(--a-active-color);
+}
+
+.number {
+	text-align: right;
 }

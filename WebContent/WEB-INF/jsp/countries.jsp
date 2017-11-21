@@ -21,7 +21,10 @@ if (continent.endsWith("All")) {
 else {
 	out.write(continent);
 }
-%></h3>
+%>
+<img src="${pageContext.request.contextPath}/img/map-world.png" 
+		alt="World map" align="right" width="147" height="76">
+</h3>
 <form action="JSPWorld" method="post">
 	<label>Continent: </label>
 	<select name="continent">
@@ -79,9 +82,12 @@ if (tableCountries != null) {
 		}
 		out.append("<td>" + country.getRegion() + ", " + 
 				country.getContinent().getName() + "</td>");
-		out.append("<td>" + df.format(country.getSurfaceArea()) + "&nbsp;km<sup>2</sup></td>");
-		out.append("<td>" + df.format(country.getPopulation()) + "</td>");
-		out.append("<td>" + df.format(country.getGnp()) + "&nbsp;M$</td>");
+		out.append("<td class='number'>" + 
+				df.format(country.getSurfaceArea()) + "&nbsp;km<sup>2</sup></td>");
+		out.append("<td class='number'>" + 
+				df.format(country.getPopulation()) + "</td>");
+		out.append("<td class='number'>" + 
+				df.format(country.getGnp()) + "&nbsp;M$</td>");
 		out.append("<td>" + country.getGovernmentForm() + "</td>");
 		out.append("<td>" + country.getHeadOfState() + "</td>");
 		out.append("<td>" + country.getIndependenceYear() + "</td><td>");

@@ -36,7 +36,7 @@ if (tableCities != null) {
 			out.append("<td><a href='https://en.wikipedia.org/wiki/"+ city.getName() + "'>" +
 				city.getName() +"</a></td>");
 			out.append("<td>" + city.getDistrict() + "</td>");
-			out.append("<td>" + df.format(city.getPopulation()) + "</td>");
+			out.append("<td class='number'>" + df.format(city.getPopulation()) + "</td>");
 			out.append("</td></tr>");				
 		}
 		out.append("</table>");

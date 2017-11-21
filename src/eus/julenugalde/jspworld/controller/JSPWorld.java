@@ -71,7 +71,6 @@ public class JSPWorld extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		RequestDispatcher rd; 		
-		System.out.println("request.getRemoteAddr(): " + request.getRemoteAddr());		
 		
 		String countryCode = request.getParameter("countryCode");
 		if (countryCode == null) {	//no country specified. Show country list
