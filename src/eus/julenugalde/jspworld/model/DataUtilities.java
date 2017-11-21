@@ -11,7 +11,7 @@ import java.util.Set;
 public class DataUtilities {
 	/** Returns a string with the information of the countries table 
 	 * 
-	 * @param tableCountries {@link Hashtable} with the list of countries to be displayed
+	 * @param tableCountries {@link LinkedHashMap} with the list of countries to be displayed
 	 * @return {@link String} of <code>tableCountries.size()</code> lines, each of them containing
 	 * the <code>toString()</code> output of each country
 	 */
@@ -33,7 +33,7 @@ public class DataUtilities {
 	
 	/** Returns a string with the information of the cities table 
 	 * 
-	 * @param tableCities {@link Hashtable} with the list of cities to be displayed
+	 * @param tableCities {@link LinkedHashMap} with the list of cities to be displayed
 	 * @return {@link String} of <code>tableCities.size()</code> lines, each of them containing
 	 * the <code>toString()</code> output of each city
 	 */
@@ -51,7 +51,7 @@ public class DataUtilities {
 	
 	/** Exports the country data to a CSV file
 	 * 
-	 * @param tableCountries {@link Hashtable} with the information of the countries to be stored.
+	 * @param tableCountries {@link LinkedHashMap} with the information of the countries to be stored.
 	 * @param file File location
 	 * @return <code>true</code> if the file was saved correctly, <code>false</code> otherwise.
 	 */

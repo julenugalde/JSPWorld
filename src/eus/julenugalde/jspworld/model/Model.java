@@ -3,44 +3,44 @@ package eus.julenugalde.jspworld.model;
 import java.util.LinkedHashMap;
 
 /** Abstract model for the application. Contains methods to retreive and update data of
- * countries and cities from the source.<br /><br /> 
+ * countries and cities from the source.<br><br>
  * Information on the 'world' database used:
-<br /><br /><code>CREATE TABLE city (<br />
-&nbsp;  ID int NOT NULL,<br />
-&nbsp;  Name char(35) NOT NULL DEFAULT '',<br />
-&nbsp;  CountryCode char(3) NOT NULL DEFAULT '',<br />
-&nbsp;  District char(20) NOT NULL DEFAULT '',<br />
-&nbsp;  Population int NOT NULL DEFAULT '0',<br />
-&nbsp;  PRIMARY KEY (ID)<br />
-)<br />
-<br />
-CREATE TABLE country (<br />
-&nbsp;  Code char(3) NOT NULL DEFAULT '',<br />
-&nbsp;  Name char(52) NOT NULL DEFAULT '',<br />
+<br><br><code>CREATE TABLE city (<br>
+&nbsp;  ID int NOT NULL,<br>
+&nbsp;  Name char(35) NOT NULL DEFAULT '',<br>
+&nbsp;  CountryCode char(3) NOT NULL DEFAULT '',<br>
+&nbsp;  District char(20) NOT NULL DEFAULT '',<br>
+&nbsp;  Population int NOT NULL DEFAULT '0',<br>
+&nbsp;  PRIMARY KEY (ID)<br>
+)<br>
+<br>
+CREATE TABLE country (<br>
+&nbsp;  Code char(3) NOT NULL DEFAULT '',<br>
+&nbsp;  Name char(52) NOT NULL DEFAULT '',<br>
 &nbsp;  Continent varchar(20) CHECK(Continent in ('Asia','Europe','North America','Africa',
-&nbsp;  'Oceania','Antarctica','South America')) NOT NULL DEFAULT 'Asia',<br />
-&nbsp;  Region char(26) NOT NULL DEFAULT '',<br />
-&nbsp;  SurfaceArea decimal(10,2) NOT NULL DEFAULT '0.00',<br />
-&nbsp;  IndepYear smallint DEFAULT NULL,<br />
-&nbsp;  Population int NOT NULL DEFAULT '0',<br />
-&nbsp;  LifeExpectancy decimal(3,1) DEFAULT NULL,<br />
-&nbsp;  GNP decimal(10,2) DEFAULT NULL,<br />
-&nbsp;  GNPOld decimal(10,2) DEFAULT NULL,<br />
-&nbsp;  LocalName char(45) NOT NULL DEFAULT '',<br />
-&nbsp;  GovernmentForm char(45) NOT NULL DEFAULT '',<br />
-&nbsp;  HeadOfState char(60) DEFAULT NULL,<br />
-&nbsp;  Capital int DEFAULT NULL,<br />
-&nbsp;  Code2 char(2) NOT NULL DEFAULT '',<br />
-&nbsp;  PRIMARY KEY (Code)<br />
-)<br />
-<br />
-CREATE TABLE countrylanguage (<br />
-&nbsp;  CountryCode char(3) NOT NULL DEFAULT '',<br />
-&nbsp;  Language char(30) NOT NULL DEFAULT '',<br />
-&nbsp;  IsOfficial char(1) CHECK(IsOfficial IN ('T','F')) NOT NULL DEFAULT 'F',<br />
-&nbsp;  Percentage decimal(4,1) NOT NULL DEFAULT '0.0',<br />
-&nbsp;  PRIMARY KEY (CountryCode,Language)<br />
-)<br />
+&nbsp;  'Oceania','Antarctica','South America')) NOT NULL DEFAULT 'Asia',<br>
+&nbsp;  Region char(26) NOT NULL DEFAULT '',<br>
+&nbsp;  SurfaceArea decimal(10,2) NOT NULL DEFAULT '0.00',<br>
+&nbsp;  IndepYear smallint DEFAULT NULL,<br>
+&nbsp;  Population int NOT NULL DEFAULT '0',<br>
+&nbsp;  LifeExpectancy decimal(3,1) DEFAULT NULL,<br>
+&nbsp;  GNP decimal(10,2) DEFAULT NULL,<br>
+&nbsp;  GNPOld decimal(10,2) DEFAULT NULL,<br>
+&nbsp;  LocalName char(45) NOT NULL DEFAULT '',<br>
+&nbsp;  GovernmentForm char(45) NOT NULL DEFAULT '',<br>
+&nbsp;  HeadOfState char(60) DEFAULT NULL,<br>
+&nbsp;  Capital int DEFAULT NULL,<br>
+&nbsp;  Code2 char(2) NOT NULL DEFAULT '',<br>
+&nbsp;  PRIMARY KEY (Code)<br>
+)<br>
+<br>
+CREATE TABLE countrylanguage (<br>
+&nbsp;  CountryCode char(3) NOT NULL DEFAULT '',<br>
+&nbsp;  Language char(30) NOT NULL DEFAULT '',<br>
+&nbsp;  IsOfficial char(1) CHECK(IsOfficial IN ('T','F')) NOT NULL DEFAULT 'F',<br>
+&nbsp;  Percentage decimal(4,1) NOT NULL DEFAULT '0.0',<br>
+&nbsp;  PRIMARY KEY (CountryCode,Language)<br>
+)<br>
 </code>
  */
 public interface Model {
